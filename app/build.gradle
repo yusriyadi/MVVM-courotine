@@ -19,6 +19,21 @@ android {
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "BASE_URL", "\"https://www.thesportsdb.com/api/v1/json/1/\""
     }
+
+    flavorDimensions "default"
+    productFlavors {
+        production {
+            applicationId "thortechasia.android.basekotlin"
+            resValue "string", "app_name", "BaseKotlin"
+        }
+        development {
+            applicationId "thortechasia.android.basekotlin.dev"
+            resValue "string", "app_name", "Dev BaseKotlin"
+        }
+
+    }
+
+
     buildTypes {
         release {
             minifyEnabled false
