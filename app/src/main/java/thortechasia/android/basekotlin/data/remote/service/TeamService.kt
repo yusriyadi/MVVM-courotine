@@ -8,6 +8,8 @@ import thortechasia.android.basekotlin.data.remote.response.TeamResponse
 interface TeamService {
 
     @GET("search_all_teams.php")
-    fun getAllTeams(@Query("l") league: String) : Single<TeamResponse>
+   suspend  fun getAllTeams(@Query("l") league: String) : TeamResponse
+
+
 
 }

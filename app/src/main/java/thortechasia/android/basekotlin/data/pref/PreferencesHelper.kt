@@ -7,9 +7,13 @@ class PreferencesHelper(val context: Context){
 
     companion object {
         private val PREF_NAME = "football_app"
-
         //KEY
-        private val LEAGUE_NAME_KEY = "league_name"
+         val LEAGUE_NAME_KEY = "league_name"
+
+        //save access_token after get login response
+        val ACCESS_TOKEN = "access_token"
+
+        val USERNAME = "user_name"
     }
 
     private var sharedPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)

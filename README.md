@@ -4,10 +4,10 @@ Base Kotlin Android Project
 Tech Stack :
 - MVVM
 - Retrofit2
-- Koin
+- Koin (Dependency Injection)
 - Rxjava2
+- Coroutine
 - Glide
 - Anko
-- groupie adapter
+- groupie adapter (Recycler View)
 - alerter
-- coil

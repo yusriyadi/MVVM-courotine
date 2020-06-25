@@ -4,22 +4,29 @@ import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 
-fun ImageView.loadImageFromUrl(url: String){
-    if (url.isEmpty()) return
+fun ImageView.loadImageFromUrl(url: String, isCircle: Boolean = false) {
 
-    Glide.with(this.context)
-        .load(url)
-        .into(this)
+    if (isCircle) {
+        Glide.with(this.context)
+            .load(url)
+            .circleCrop()
+            .into(this)
+    } else {
+        Glide.with(this.context)
+            .load(url)
+            .into(this)
+    }
+
 }
 
 fun View.visible() {
     this.visibility = View.VISIBLE
 }
 
-fun View.invis(){
+fun View.invis() {
     this.visibility = View.INVISIBLE
 }
 
-fun View.gone(){
+fun View.gone() {
     this.visibility = View.GONE
 }
