@@ -8,11 +8,13 @@ import com.github.ajalt.timberkt.e
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import thortechasia.android.basekotlin.R
 import thortechasia.android.basekotlin.domain.Team
+import thortechasia.android.basekotlin.presentation.detail.DetailClubActivity
 import thortechasia.android.basekotlin.utils.UiState
 import thortechasia.android.basekotlin.utils.gone
 import thortechasia.android.basekotlin.utils.visible
@@ -65,7 +67,15 @@ class MainActivity : AppCompatActivity() {
 
         val setDataToAdapter = TeamItemAdapter(it, object : TeamItemAdapter.OnClickListerner {
             override fun onClick(team: Team) {
-                toast(team.teamName)
+//                toast(team.teamName)
+                startActivity<DetailClubActivity>("data" to team)
+                vm.saveStringToPref(team.teamName)
+//                lifecycleScope.launch {
+//                    delay(500)
+//                    this@MainActivity.runOnUiThread {
+//                        toast(vm.getStringFromPref())
+//                    }
+//                }
             }
         })
         groupAdapter.add(setDataToAdapter)

@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import thortechasia.android.basekotlin.data.db.entity.TeamEntity
 import thortechasia.android.basekotlin.data.pref.PreferencesHelper
 import thortechasia.android.basekotlin.data.repository.TeamRepository
 import thortechasia.android.basekotlin.domain.Team
@@ -19,6 +20,7 @@ class MainViewModel(
 ) : ViewModel() {
 
     val teamState = MutableLiveData<UiState<List<Team>>>()
+    val addDataState = MutableLiveData<String>()
 
     fun getTeams(league: String) {
         viewModelScope.launch {
@@ -34,13 +36,25 @@ class MainViewModel(
     }
 
     //how to save and get from pref, use the method inside Pref. class
-    fun saveStringToPref(text : String) {
-       preferencesHelper.saveString(PreferencesHelper.USERNAME, text)
+    fun saveStringToPref(text: String) {
+        preferencesHelper.saveString(PreferencesHelper.USERNAME, text)
     }
 
-    fun getStringFromPref(){
-       preferencesHelper.getString(PreferencesHelper.USERNAME)
+    fun getStringFromPref() {
+        preferencesHelper.getString(PreferencesHelper.USERNAME)
     }
 
+    fun addFav(data: TeamEntity) {
+        viewModelScope.launch {
+            kotlin.runCatching {
+                teamRepository.addFav(data)
+            }.onSuccess {
+                addDataState.value = "success"
+            }.onFailure {
+                addDataState.value = "gagal ${it.message}"
+            }
+
+        }
+    }
 
 }

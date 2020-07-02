@@ -31,9 +31,7 @@ val viewModelModule = module {
 }
 
 val dataBaseModule = module {
-    single {
-        Room.databaseBuilder(androidApplication(), AppDatabase::class.java, "app-database").build()
-    }
+    single { AppDatabase.getInstance(androidApplication()) }
     single { get<AppDatabase>().teamDao() }
 }
 
@@ -43,4 +41,4 @@ val repositoryModule = module {
     single<TeamRepository> { TeamRepositoryImpl(get(), get()) }
 }
 
-val myAppModule = listOf(networkModule, repositoryModule,viewModelModule, dataBaseModule)
+val myAppModule = listOf(networkModule, repositoryModule, viewModelModule, dataBaseModule)
