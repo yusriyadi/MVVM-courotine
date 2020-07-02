@@ -1,5 +1,6 @@
 package thortechasia.android.basekotlin.presentation.main
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,9 +19,10 @@ class MainViewModel(
     val teamRepository: TeamRepository,
     val preferencesHelper: PreferencesHelper
 ) : ViewModel() {
-
+     val data = MutableLiveData<UiState<List<TeamEntity>>>()
     val teamState = MutableLiveData<UiState<List<Team>>>()
-    val addDataState = MutableLiveData<String>()
+    val addDataState = MutableLiveData<UiState<String>>()
+
 
     fun getTeams(league: String) {
         viewModelScope.launch {
@@ -49,11 +51,23 @@ class MainViewModel(
             kotlin.runCatching {
                 teamRepository.addFav(data)
             }.onSuccess {
-                addDataState.value = "success"
+                addDataState.value = UiState.Success("berhasil")
             }.onFailure {
-                addDataState.value = "gagal ${it.message}"
+                addDataState.value =UiState.Error(it)
             }
 
+        }
+    }
+
+    fun lookThelist() {
+        viewModelScope.launch {
+            kotlin.runCatching {
+                teamRepository.getFavList()
+            }.onSuccess {
+                data.value = UiState.Success(it)
+            }.onFailure {
+                data.value = UiState.Error(it)
+            }
         }
     }
 

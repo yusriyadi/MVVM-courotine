@@ -10,6 +10,6 @@ import thortechasia.android.basekotlin.data.db.entity.TeamEntity
 interface TeamDao : BaseDao<TeamEntity> {
 
     @Query("SELECT * FROM team")
-    fun findAll() : LiveData<List<TeamEntity>>
+    suspend fun findAll() : List<TeamEntity>
 
 }

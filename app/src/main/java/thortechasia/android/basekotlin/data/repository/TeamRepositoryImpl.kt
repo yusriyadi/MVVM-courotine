@@ -21,7 +21,7 @@ class TeamRepositoryImpl(val teamService: TeamService,
         return teamService.getAllTeams(league)
     }
 
-    override suspend fun getFavList(): LiveData<List<TeamEntity>> {
+    override suspend fun getFavList(): List<TeamEntity> {
         return teamDao.findAll()
     }
 
