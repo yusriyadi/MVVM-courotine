@@ -71,14 +71,18 @@ class FavoriteFragment : BaseFragment() {
 
         vm.getFavorite()
         initRv()
-
+        swipeRefresh.setOnRefreshListener {
+            vm.getFavorite()
+        }
         vm.observeLisFav().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is UiState.Loading -> {
                     loadingStart()
                 }
                 is UiState.Success -> {
+                    swipeRefresh.isRefreshing = false
                     loadingDismiss()
+                    groupAdapter.clear()
                     it.data.map {
                         groupAdapter.add(TeamItemAdapterSimplify(
                             Team(
@@ -95,8 +99,8 @@ class FavoriteFragment : BaseFragment() {
 
                 }
                 is UiState.Error -> {
+                    swipeRefresh.isRefreshing = false
                     loadingDismiss()
-
                 }
             }
         })

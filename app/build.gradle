@@ -114,6 +114,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha07'
     implementation "android.arch.lifecycle:extensions:2.3.0-alpha07"
     annotationProcessor "android.arch.lifecycle:compiler:2.3.0-alpha07"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.0"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.0"

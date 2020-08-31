@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.activity_detail_club.*
+import kotlinx.android.synthetic.main.fragment_detail_club.*
 import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import thortechasia.android.basekotlin.R
@@ -30,6 +30,8 @@ class DetailClubActivity : BaseActivity() {
         data = intent.getParcelableExtra("data")
 
         setupToolbar(title = data.teamName,isBackVisble = true)
+
+
 
         vm.lookThelist(data.teamName)
 
