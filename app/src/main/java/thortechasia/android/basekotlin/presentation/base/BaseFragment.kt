@@ -24,7 +24,7 @@ open class BaseFragment : Fragment() {
         if(isVisible){
             toolbar?.title = title
             toolbar?.setNavigationOnClickListener {
-                findNavController().popBackStack()
+
             }
         }
         else{

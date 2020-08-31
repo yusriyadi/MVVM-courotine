@@ -18,6 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import thortechasia.android.basekotlin.R
 import thortechasia.android.basekotlin.domain.Team
 import thortechasia.android.basekotlin.presentation.base.BaseFragment
+import thortechasia.android.basekotlin.presentation.detail.DetailClubActivity
 import thortechasia.android.basekotlin.presentation.main.MainViewModel
 import thortechasia.android.basekotlin.presentation.main.TeamItemAdapter
 import thortechasia.android.basekotlin.presentation.main.TeamItemAdapterSimplify
@@ -102,9 +103,7 @@ class HomeFragment : BaseFragment() {
 
     private fun setDataToItemAdapterSimplyWay(it: Team) {
         groupAdapter.add(TeamItemAdapterSimplify(it) {
-            val bundle = bundleOf("data" to it, ConstVal.MENU_ID to ConstVal.HOME)
-            view?.findNavController()
-                ?.navigate(R.id.action_homeFragment_to_detailClubFragment, bundle)
+            context?.startActivity<DetailClubActivity>("data" to it)
         })
     }
 

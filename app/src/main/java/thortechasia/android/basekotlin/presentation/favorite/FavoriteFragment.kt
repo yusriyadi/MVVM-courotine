@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.fragment_favorite.*
+import org.jetbrains.anko.startActivity
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import thortechasia.android.basekotlin.R
 import thortechasia.android.basekotlin.data.db.entity.TeamEntity
 import thortechasia.android.basekotlin.domain.Team
 import thortechasia.android.basekotlin.presentation.base.BaseFragment
+import thortechasia.android.basekotlin.presentation.detail.DetailClubActivity
 import thortechasia.android.basekotlin.presentation.main.MainViewModel
 import thortechasia.android.basekotlin.presentation.main.TeamItemAdapter
 import thortechasia.android.basekotlin.presentation.main.TeamItemAdapterSimplify
@@ -87,9 +89,7 @@ class FavoriteFragment : BaseFragment() {
                                 teamLogo = it.teamImage
                             )
                         ) {
-                            val bundle = bundleOf("data" to it, ConstVal.MENU_ID to ConstVal.FAVORITE)
-                            view?.findNavController()
-                                ?.navigate(R.id.action_favoriteFragment_to_detailClubFragment, bundle)
+                            context?.startActivity<DetailClubActivity>("data" to it)
                         })
                     }
 
