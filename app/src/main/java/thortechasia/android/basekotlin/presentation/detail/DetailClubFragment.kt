@@ -5,22 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_detail_club.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_action_bar.*
 import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import thortechasia.android.basekotlin.R
 import thortechasia.android.basekotlin.data.db.entity.TeamEntity
 import thortechasia.android.basekotlin.domain.Team
+import thortechasia.android.basekotlin.presentation.base.BaseFragment
 import thortechasia.android.basekotlin.presentation.main.MainActivity
 import thortechasia.android.basekotlin.presentation.main.MainViewModel
-import thortechasia.android.basekotlin.utils.UiState
-import thortechasia.android.basekotlin.utils.gone
-import thortechasia.android.basekotlin.utils.loadImageFromDrawable
-import thortechasia.android.basekotlin.utils.loadImageFromUrl
+import thortechasia.android.basekotlin.utils.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -32,20 +30,37 @@ private const val ARG_PARAM2 = "param2"
  * Use the [DetailClubFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class DetailClubFragment : Fragment() {
+class DetailClubFragment : BaseFragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
+    var idMenu : Int =0
 
-    lateinit var data : Team
+    lateinit var data: Team
     val vm by viewModel<MainViewModel>()
     var isThisTeamFav = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
+            idMenu = it.getInt(ConstVal.MENU_ID)
+            data = arguments?.getParcelable("data")!!
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                   findNavController().navigate(getBackMenuId(idMenu))
+            }
+        })
+
+    }
+
+    private fun getBackMenuId(key :Int): Int {
+        return when (key){
+            ConstVal.HOME->  R.id.action_detailClubFragment_to_homeFragment
+           else-> R.id.action_detailClubFragment_to_favoriteFragment2
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,13 +72,8 @@ class DetailClubFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        data = arguments?.getParcelable("data")!!
-        toolbar?.title = "detail nih"
-        toolbar?.setNavigationOnClickListener {
-            findNavController().popBackStack()
-        }
 
-
+        setupToolbar(title = data.teamName)
 
         vm.lookThelist(data.teamName)
 
@@ -71,39 +81,77 @@ class DetailClubFragment : Fragment() {
         ivTeam.loadImageFromUrl(data.teamLogo)
 
 
-        btnSave.setOnClickListener {
-            if (isThisTeamFav){
-                vm.addFav(TeamEntity(data.teamId.toInt(),data.teamName,data.teamLogo,data.teamDescription,data.teamStadiumName))
-            }
-            else{
-                context?.toast("delete coming soon")
-            }
-        }
+
 
         observeAddFavLIveData()
-        observeDataFav()
+        observeDeleteLIveData()
 
+        observeDataFav(isFavorite = { fav ->
+            btnSave.setOnClickListener {
+                if (fav) {
+                    vm.deleteFav(getThisTeamData())
+                } else {
+                    vm.addFav(getThisTeamData())
+                }
+
+            }
+        })
 
 
     }
+
+    private fun observeDeleteLIveData() {
+        vm.observeDeleteFav().observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is UiState.Loading -> {
+                    loadingStart()
+                }
+                is UiState.Success -> {
+                    loadingDismiss()
+                    toast("hapus berhasil")
+                    vm.lookThelist(data.teamName)
+                }
+                is UiState.Error -> {
+                    loadingDismiss()
+                    toast("hapus gagal : ${it.throwable.message}")
+                }
+            }
+        })
+    }
+
+    private fun getThisTeamData(): TeamEntity {
+        return TeamEntity(
+            data.teamId.toInt(),
+            data.teamName,
+            data.teamLogo,
+            data.teamDescription,
+            data.teamStadiumName
+        )
+    }
+
     fun accessParentActivity() = (activity as? MainActivity)
 
-    private fun observeDataFav() {
+    private fun observeDataFav(isFavorite: (Boolean) -> Unit) {
         vm.observeDataFav().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is UiState.Loading -> {
-
+                    loadingStart()
                 }
                 is UiState.Success -> {
-                    if (it.data.size==1){
+                    loadingDismiss()
+                    if (!it.data.isEmpty()) {
+                        isFavorite(true)
                         btnSave.loadImageFromDrawable(R.drawable.ic_baseline_favorite_24)
                         isThisTeamFav = true
-                    }else{
+                    } else {
+                        isFavorite(false)
                         btnSave.loadImageFromDrawable(R.drawable.ic_baseline_favorite_border_24)
+
                         isThisTeamFav = false
                     }
                 }
                 is UiState.Error -> {
+                    loadingDismiss()
                     context?.toast(it.throwable.message.toString())
                 }
             }
@@ -114,10 +162,11 @@ class DetailClubFragment : Fragment() {
         vm.observeAddFavLiveData().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is UiState.Loading -> {
-                    context?.toast("loading")
+                    loadingStart()
                 }
                 is UiState.Success -> {
-                    context?.toast("data has been added")
+                    loadingDismiss()
+                    context?.toast("${data.teamName} ${it.data}")
                     vm.lookThelist(data.teamName)
                 }
                 is UiState.Error -> {
@@ -126,7 +175,6 @@ class DetailClubFragment : Fragment() {
             }
         })
     }
-
 
 
     companion object {

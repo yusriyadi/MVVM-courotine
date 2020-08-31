@@ -13,6 +13,7 @@ import thortechasia.android.basekotlin.data.remote.AuthInterceptor
 import thortechasia.android.basekotlin.data.repository.TeamRepository
 import thortechasia.android.basekotlin.data.repository.TeamRepositoryImpl
 import thortechasia.android.basekotlin.data.remote.service.TeamService
+import thortechasia.android.basekotlin.presentation.favorite.FavoriteViewModel
 import thortechasia.android.basekotlin.presentation.main.MainViewModel
 import thortechasia.android.momakan.utils.scheduler.AppSchedulerProvider
 import thortechasia.android.momakan.utils.scheduler.SchedulerProvider
@@ -28,6 +29,7 @@ val networkModule = module {
 
 val viewModelModule = module {
     viewModel { MainViewModel(get(), get()) }
+    viewModel { FavoriteViewModel(get(),get()) }
 }
 
 val dataBaseModule = module {

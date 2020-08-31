@@ -5,7 +5,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
+import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.kotlinandroidextensions.ViewHolder
+import kotlinx.android.synthetic.main.fragment_favorite.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import thortechasia.android.basekotlin.R
+import thortechasia.android.basekotlin.data.db.entity.TeamEntity
+import thortechasia.android.basekotlin.domain.Team
+import thortechasia.android.basekotlin.presentation.base.BaseFragment
+import thortechasia.android.basekotlin.presentation.main.MainViewModel
+import thortechasia.android.basekotlin.presentation.main.TeamItemAdapter
+import thortechasia.android.basekotlin.presentation.main.TeamItemAdapterSimplify
+import thortechasia.android.basekotlin.utils.ConstVal
+import thortechasia.android.basekotlin.utils.UiState
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,17 +36,22 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FavoriteFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FavoriteFragment : Fragment() {
+class FavoriteFragment : BaseFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
+    val vm by viewModel<FavoriteViewModel>()
+    val groupAdapter = GroupAdapter<ViewHolder>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+
+
+
     }
 
     override fun onCreateView(
@@ -36,6 +60,54 @@ class FavoriteFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favorite, container, false)
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupToolbar(title = "List Favorite")
+
+        vm.getFavorite()
+        initRv()
+
+        vm.observeLisFav().observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is UiState.Loading -> {
+                    loadingStart()
+                }
+                is UiState.Success -> {
+                    loadingDismiss()
+                    it.data.map {
+                        groupAdapter.add(TeamItemAdapterSimplify(
+                            Team(
+                                teamName = it.teamName,
+                                teamId = it.teamId.toString(),
+                                teamDescription = it.teamDescription,
+                                teamStadiumName = it.stadiumName,
+                                teamLogo = it.teamImage
+                            )
+                        ) {
+                            val bundle = bundleOf("data" to it, ConstVal.MENU_ID to ConstVal.FAVORITE)
+                            view?.findNavController()
+                                ?.navigate(R.id.action_favoriteFragment_to_detailClubFragment, bundle)
+                        })
+                    }
+
+                }
+                is UiState.Error -> {
+                    loadingDismiss()
+
+                }
+            }
+        })
+
+    }
+
+    private fun initRv() {
+        rvFav.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = groupAdapter
+        }
     }
 
     companion object {
@@ -49,11 +121,10 @@ class FavoriteFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
             FavoriteFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
                 }
             }
     }

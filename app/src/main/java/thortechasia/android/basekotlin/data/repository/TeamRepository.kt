@@ -14,4 +14,5 @@ interface TeamRepository {
     suspend fun getFavList():List<TeamEntity>
     suspend fun checkFavTeam(teamName : String) :List<TeamEntity>
     suspend fun addFav(data: TeamEntity)
+    suspend fun deletFav(data: TeamEntity)
 }

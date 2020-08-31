@@ -34,5 +34,9 @@ class TeamRepositoryImpl(val teamService: TeamService,
         teamDao.insert(data)
     }
 
+    override suspend fun deletFav(data: TeamEntity) {
+        teamDao.delete(data)
+    }
+
 
 }

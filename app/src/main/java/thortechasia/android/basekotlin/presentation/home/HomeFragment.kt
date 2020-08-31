@@ -7,24 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.ajalt.timberkt.e
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.layout_action_bar.*
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import thortechasia.android.basekotlin.R
 import thortechasia.android.basekotlin.domain.Team
-import thortechasia.android.basekotlin.presentation.detail.DetailClubActivity
+import thortechasia.android.basekotlin.presentation.base.BaseFragment
 import thortechasia.android.basekotlin.presentation.main.MainViewModel
 import thortechasia.android.basekotlin.presentation.main.TeamItemAdapter
 import thortechasia.android.basekotlin.presentation.main.TeamItemAdapterSimplify
+import thortechasia.android.basekotlin.utils.ConstVal
 import thortechasia.android.basekotlin.utils.UiState
 import thortechasia.android.basekotlin.utils.gone
 import thortechasia.android.basekotlin.utils.visible
@@ -40,7 +37,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -66,9 +63,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setupToolbar(title = "List Club")
         initRv()
-
         if (vm.dataTeam.isEmpty()) {
             vm.getTeams("English Premier League")
         }else{
@@ -106,7 +102,7 @@ class HomeFragment : Fragment() {
 
     private fun setDataToItemAdapterSimplyWay(it: Team) {
         groupAdapter.add(TeamItemAdapterSimplify(it) {
-            val bundle = bundleOf("data" to it)
+            val bundle = bundleOf("data" to it, ConstVal.MENU_ID to ConstVal.HOME)
             view?.findNavController()
                 ?.navigate(R.id.action_homeFragment_to_detailClubFragment, bundle)
         })
@@ -117,7 +113,7 @@ class HomeFragment : Fragment() {
         val setDataToAdapter = TeamItemAdapter(it, object : TeamItemAdapter.OnClickListerner {
             override fun onClick(team: Team) {
 //                toast(team.teamName)
-                context?.startActivity<DetailClubActivity>("data" to team)
+
                 vm.saveStringToPref(team.teamName)
 //                lifecycleScope.launch {
 //                    delay(500)
@@ -131,6 +127,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun initRv() {
+        groupAdapter.clear()
         rvTeams.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = groupAdapter
@@ -149,11 +146,10 @@ class HomeFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
             HomeFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
                 }
             }
     }

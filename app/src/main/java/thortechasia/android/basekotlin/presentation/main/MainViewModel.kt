@@ -3,6 +3,8 @@ package thortechasia.android.basekotlin.presentation.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.reactivex.internal.operators.single.SingleDoOnError
+import io.reactivex.internal.operators.single.SingleDoOnSuccess
 import kotlinx.coroutines.launch
 import thortechasia.android.basekotlin.data.db.entity.TeamEntity
 import thortechasia.android.basekotlin.data.pref.PreferencesHelper
@@ -51,11 +53,27 @@ class MainViewModel(
             kotlin.runCatching {
                 teamRepository.addFav(data)
             }.onSuccess {
-                addDataState.value = UiState.Success("berhasil")
+                addDataState.value = UiState.Success("ditambahkan ke favorite")
             }.onFailure {
                 addDataState.value = UiState.Error(it)
             }
 
+        }
+    }
+
+    private val deleteLiveData = MutableLiveData<UiState<String>>()
+    fun observeDeleteFav()= deleteLiveData
+    fun deleteFav(team : TeamEntity){
+        viewModelScope.launch {
+            kotlin.runCatching {
+                teamRepository.deletFav(team)
+                deleteLiveData.value = UiState.Loading(true)
+            }.onSuccess {
+                deleteLiveData.value = UiState.Success("hapus berhasil!")
+            }.onFailure {
+                deleteLiveData.value = UiState.Error(it)
+
+            }
         }
     }
 
