@@ -25,6 +25,11 @@ class TeamRepositoryImpl(val teamService: TeamService,
         return teamDao.findAll()
     }
 
+    override suspend fun checkFavTeam(teamName: String): List<TeamEntity> {
+        return teamDao.checkFavTeam(teamName)
+    }
+
+
     override suspend fun addFav(data: TeamEntity) {
         teamDao.insert(data)
     }

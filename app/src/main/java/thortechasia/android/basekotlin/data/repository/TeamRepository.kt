@@ -12,5 +12,6 @@ interface TeamRepository {
     //use this code if you need a whole response
     suspend fun getTeamsNonMap(league: String): TeamResponse
     suspend fun getFavList():List<TeamEntity>
+    suspend fun checkFavTeam(teamName : String) :List<TeamEntity>
     suspend fun addFav(data: TeamEntity)
 }

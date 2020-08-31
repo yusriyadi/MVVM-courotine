@@ -12,4 +12,7 @@ interface TeamDao : BaseDao<TeamEntity> {
     @Query("SELECT * FROM team")
     suspend fun findAll() : List<TeamEntity>
 
+    @Query("SELECT * FROM team WHERE teamName LIKE :teamName")
+    suspend fun checkFavTeam(teamName : String) : List<TeamEntity>
+
 }

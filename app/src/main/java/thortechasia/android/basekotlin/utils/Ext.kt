@@ -19,6 +19,11 @@ fun ImageView.loadImageFromUrl(url: String, isCircle: Boolean = false) {
 
 }
 
+fun ImageView.loadImageFromDrawable(int : Int){
+    Glide.with(this.context)
+        .load(int)
+        .into(this)
+}
 fun View.visible() {
     this.visibility = View.VISIBLE
 }

@@ -1,6 +1,5 @@
 package thortechasia.android.basekotlin.presentation.main
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,20 +8,20 @@ import thortechasia.android.basekotlin.data.db.entity.TeamEntity
 import thortechasia.android.basekotlin.data.pref.PreferencesHelper
 import thortechasia.android.basekotlin.data.repository.TeamRepository
 import thortechasia.android.basekotlin.domain.Team
-import thortechasia.android.basekotlin.presentation.base.BaseViewModel
 import thortechasia.android.basekotlin.utils.UiState
-import thortechasia.android.momakan.utils.scheduler.SchedulerProvider
-import thortechasia.android.momakan.utils.scheduler.with
-import java.lang.ref.PhantomReference
 
 class MainViewModel(
-    val teamRepository: TeamRepository,
-    val preferencesHelper: PreferencesHelper
+    private val teamRepository: TeamRepository,
+    private val preferencesHelper: PreferencesHelper
 ) : ViewModel() {
-     val data = MutableLiveData<UiState<List<TeamEntity>>>()
-    val teamState = MutableLiveData<UiState<List<Team>>>()
-    val addDataState = MutableLiveData<UiState<String>>()
+    private val dataFav = MutableLiveData<UiState<List<TeamEntity>>>()
+    private val teamState = MutableLiveData<UiState<List<Team>>>()
+    private val addDataState = MutableLiveData<UiState<String>>()
+    var dataTeam = mutableListOf<Team>()
 
+    fun observeAddFavLiveData() = addDataState
+    fun observeTeamLiveData() = teamState
+    fun observeDataFav() = dataFav
 
     fun getTeams(league: String) {
         viewModelScope.launch {
@@ -31,6 +30,7 @@ class MainViewModel(
                 teamRepository.getTeams(league)
             }.onSuccess {
                 teamState.value = UiState.Success(it)
+                dataTeam.addAll(it)
             }.onFailure {
                 teamState.value = UiState.Error(it)
             }
@@ -53,20 +53,20 @@ class MainViewModel(
             }.onSuccess {
                 addDataState.value = UiState.Success("berhasil")
             }.onFailure {
-                addDataState.value =UiState.Error(it)
+                addDataState.value = UiState.Error(it)
             }
 
         }
     }
 
-    fun lookThelist() {
+    fun lookThelist(teamName : String) {
         viewModelScope.launch {
             kotlin.runCatching {
-                teamRepository.getFavList()
+                teamRepository.checkFavTeam(teamName)
             }.onSuccess {
-                data.value = UiState.Success(it)
+                dataFav.value = UiState.Success(it)
             }.onFailure {
-                data.value = UiState.Error(it)
+                dataFav.value = UiState.Error(it)
             }
         }
     }
