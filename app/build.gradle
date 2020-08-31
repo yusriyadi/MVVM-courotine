@@ -123,5 +123,6 @@ dependencies {
     implementation("io.coil-kt:coil:0.8.0")
 
     debugImplementation "com.github.chuckerteam.chucker:library:3.2.0"
+    implementation 'androidx.paging:paging-runtime:2.1.0'
 
 }
