@@ -10,6 +10,7 @@ import thortechasia.android.basekotlin.data.remote.createWebService
 import thortechasia.android.basekotlin.data.remote.provideOkHttpClient
 import thortechasia.android.basekotlin.data.pref.PreferencesHelper
 import thortechasia.android.basekotlin.data.remote.AuthInterceptor
+import thortechasia.android.basekotlin.data.remote.CacheInterceptor
 import thortechasia.android.basekotlin.data.repository.TeamRepository
 import thortechasia.android.basekotlin.data.repository.TeamRepositoryImpl
 import thortechasia.android.basekotlin.data.remote.service.TeamService
@@ -20,7 +21,8 @@ import thortechasia.android.momakan.utils.scheduler.SchedulerProvider
 
 val networkModule = module {
     single { PreferencesHelper(androidContext()) }
-    single { provideOkHttpClient(get(), get()) }
+    single { provideOkHttpClient(get(), get(),get()) }
+    single { CacheInterceptor(get()) }
     single { createWebService<TeamService>(get()) }
     single { AuthInterceptor(get()) }
     //add this line if u use rxJava instead courotine

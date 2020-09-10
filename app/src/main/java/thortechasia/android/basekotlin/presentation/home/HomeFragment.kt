@@ -73,6 +73,12 @@ class HomeFragment : BaseFragment() {
                 setDataToItemAdapterSimplyWay(it)
             }
         }
+
+        swipeREfresh.setOnRefreshListener {
+            groupAdapter.clear()
+            vm.getTeams("English Premier League")
+        }
+
         listTeamObserver()
 
     }
@@ -86,6 +92,7 @@ class HomeFragment : BaseFragment() {
                 }
                 is UiState.Success -> {
                     progressBar.gone()
+                    swipeREfresh.isRefreshing = false
                     it.data.forEach {
 //                        setDataToItemAdapter(it)
                         //simply way
@@ -94,6 +101,7 @@ class HomeFragment : BaseFragment() {
                     }
                 }
                 is UiState.Error -> {
+                    swipeREfresh.isRefreshing = false
                     progressBar.gone()
                     e(it.throwable)
                 }
