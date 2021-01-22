@@ -10,7 +10,7 @@ android {
     compileSdkVersion 28
     buildToolsVersion "29.0.0"
     defaultConfig {
-        applicationId "thortechasia.android.basekotlin"
+        applicationId "tellabs.android.basekotlin"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
@@ -24,11 +24,11 @@ android {
     flavorDimensions "default"
     productFlavors {
         production {
-            applicationId "thortechasia.android.basekotlin"
+            applicationId "tellabs.android.basekotlin"
             resValue "string", "app_name", "BaseKotlin"
         }
         development {
-            applicationId "thortechasia.android.basekotlin.dev"
+            applicationId "tellabs.android.basekotlin.dev"
             resValue "string", "app_name", "Dev BaseKotlin"
         }
 
