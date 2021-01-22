@@ -22,19 +22,15 @@ class DetailClubActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_detail_club)
         data = intent.getParcelableExtra("data")
+        initUi()
 
-        setupToolbar(title = data.teamName,isBackVisble = true)
-
-
-
-        vm.lookThelist(data.teamName)
-
-        textView.text = data.teamName
-        ivTeam.loadImageFromUrl(data.teamLogo)
+        vm.isThisTeamFav(data.teamName)
 
         observeAddFavLIveData()
         observeDeleteLIveData()
 
+
+        //selain menggunakan callback cara ini. bisa juga flag isFavorite dibuat menjadi live data, dan modif sedikit lah
         observeDataFav(isFavorite = { fav ->
             btnSave.setOnClickListener {
                 if (fav) {
@@ -48,6 +44,13 @@ class DetailClubActivity : BaseActivity() {
 
     }
 
+    private fun initUi() {
+        tvTeamName.text = data.teamName
+        ivTeam.loadImageFromUrl(data.teamLogo)
+        tvDescription.text = data.teamDescription
+        setupToolbar(title = data.teamName,isBackVisble = true)
+    }
+
     private fun observeDeleteLIveData() {
         vm.observeDeleteFav().observe(this, Observer {
             when (it) {
@@ -57,7 +60,7 @@ class DetailClubActivity : BaseActivity() {
                 is UiState.Success -> {
                     loadingDismiss()
                     toast("hapus berhasil")
-                    vm.lookThelist(data.teamName)
+                    vm.isThisTeamFav(data.teamName)
                 }
                 is UiState.Error -> {
                     loadingDismiss()
@@ -94,7 +97,6 @@ class DetailClubActivity : BaseActivity() {
                     } else {
                         isFavorite(false)
                         btnSave.loadImageFromDrawable(R.drawable.ic_baseline_favorite_border_24)
-
                         isThisTeamFav = false
                     }
                 }
@@ -115,7 +117,7 @@ class DetailClubActivity : BaseActivity() {
                 is UiState.Success -> {
                     loadingDismiss()
                     toast("${data.teamName} ${it.data}")
-                    vm.lookThelist(data.teamName)
+                    vm.isThisTeamFav(data.teamName)
                 }
                 is UiState.Error -> {
                     toast("gagal ${it}")

@@ -75,7 +75,7 @@ class MainViewModel(
         }
     }
 
-    fun lookThelist(teamName : String) {
+    fun isThisTeamFav(teamName : String) {
         viewModelScope.launch {
             kotlin.runCatching {
                 teamRepository.checkFavTeam(teamName)
