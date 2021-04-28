@@ -14,6 +14,7 @@ import tellabs.android.basekotlin.data.repository.TeamRepository
 import tellabs.android.basekotlin.data.repository.TeamRepositoryImpl
 import tellabs.android.basekotlin.data.remote.service.TeamService
 import tellabs.android.basekotlin.presentation.favorite.FavoriteViewModel
+import tellabs.android.basekotlin.presentation.main.CashierFragmentViewModel
 import tellabs.android.basekotlin.presentation.main.MainViewModel
 
 val networkModule = module {
@@ -29,6 +30,7 @@ val networkModule = module {
 val viewModelModule = module {
     viewModel { MainViewModel(get(), get()) }
     viewModel { FavoriteViewModel(get(),get()) }
+    viewModel { CashierFragmentViewModel() }
 }
 
 val dataBaseModule = module {
